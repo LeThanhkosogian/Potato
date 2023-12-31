@@ -14,7 +14,6 @@
 
    - NBNS là giao thức quảng bá (broadcast) hoạt động trên nền UPD phục vụ viện phân giải tên, thường được sử dụng trong môi trường Windows.
    - Khi thực hiện một DNS lookup:
-
      - Trước tiên, Windows sẽ kiểm tra file "hosts" trong "C:\Windows\System32\drivers\etc".
      - Nếu không có, Windows thực hiện DNS lookup để tìm.
      - Nếu không thể tìm thấy, Windows sẽ thực hiện NBNS lookup. Giao thức NBNS sẽ hỏi tất cả các host có trong mạng nội bộ bằng cách truyền Broadcast "Who knows the IP address for host XXX?". Bất kể một host nào trong mạng đều có thể tự do trả lời gói tin này.
@@ -24,7 +23,6 @@
    - Lợi dụng điểm yếu của NBNS khi tất cả các host đều có thể trả lời gói tin broadcast hỏi địa chỉ, Attacker có thể đánh lừa hệ thống của Victim rằng Attacker chính là nơi mà Victim đang tìm.
    ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/bbca36e6-3457-4570-8c6c-3d7b89340252)
    - Attacker nghe lén mọi lưu lượng mạng và phản hồi tất cả các truy vấn NBNS trong mạng nội bộ, cố gắng giả mạo mọi hosts, trả lời các requests bằng địa chỉ IP của Attacker. Thế nhưng, thực tế thì Attacker không thể có quyền nghe lén tất cả lưu lượng mạng (điều này đòi hỏi phải có Local administrator). Vậy làm thế nào để Attacker có thể thực hiện NBNS spoofing?
-  
       - Trong thực tế, Attacker có thể biết trước được tên host mà Victim muốn tìm kiếm. Attacker có thể làm giả response (gửi lại cho Victim) và cho dù có TXID (Transaction ID) để xác minh nhưng đó chỉ là số hexa 16 bit (và vì là giao thức UDP nên việc trao đổi sẽ rất nhanh), Attacker lại một lần nữa có thể dùng kĩ thuật Flood để thử nhiều nhất là 2^16=65536 khả năng để đánh lừa Victim.
         ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/8edc2292-ed4a-4c5f-9b6b-f227490c9f0e)
       - Thế nhưng sẽ thế nào nếu lỡ trong mạng nội bộ đã có sẵn bản ghi DNS mà Victim đang muốn tìm ? Attacker có thể sử dụng kĩ thuật gây cạn kiệt các UDP port, khiến cho mọi DNS lookups đều thất bại => Buộc Victim phải dùng NBNS.
@@ -44,6 +42,7 @@
    - Khi người dùng thường tải xuống bản cập nhật, họ sẽ được yêu cầu xác thực NTML với máy chủ proxy. Attacker sẽ sử dụng kĩ thuật NTML relay để tận dụng token xác thực này.
      
 ## 3. HTTP -> SMB NTLM Relay: Attacker sử dụng WPAD NTML token để truy cập SMB và tạo ra tiển trình có đặc quyền.
+
 ### 3.1. NTLM (Windows New Technology LAN Manager)
    - Là giao thức xác thực dạng Challenge/Response (Thử thách / Phản hồi)
    - SSO (Single Sign-On): đăng nhập 1 lần
