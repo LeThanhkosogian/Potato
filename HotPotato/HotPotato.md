@@ -1,8 +1,9 @@
 # Hot Potato
 
-Hot Potato là potato đầu tiên và được đặt tên bởi người phát hiện ra nó Stephen Breen @breenmachine. Lỗ hổng này có ảnh hưởng đến Windows 7, 8, 10 và Windows Server 2008 và Server 2012.
+### Hot Potato là potato đầu tiên và được đặt tên bởi người phát hiện ra nó Stephen Breen [@breenmachine](https://twitter.com/breenmachine). Lỗ hổng này có ảnh hưởng đến Windows 7, 8, 10 và Windows Server 2008 và Server 2012.
 
-Luồng hoạt động của Hot Potato
+#### Luồng hoạt động của Hot Potato
+
 ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/82014ed2-b92c-42fd-b087-91f8c1778a85)
 
 Tổng quan, Hot Potato được chia làm 3 phần chính, tất cả đều có thể sử dụng dòng lệnh để cấu hình. Hơn thế, mỗi phần đều là các kĩ thuât đã được biết đến và được sử dụng trong khoảng thời gian dài, thậm chí cho đến hiện tại (2023).
@@ -63,3 +64,9 @@ Tổng quan, Hot Potato được chia làm 3 phần chính, tất cả đều c�
          - Server lại gửi "Đề thi", "Lời giải" của Client và Username đến DC
          - DC tìm Username trong DC rồi dùng Pwd/NTLMHashedPwd để "Giải đề"
          - Nếu "Lời giải" của DC và Client trùng nhau -> OK
+
+   3.2. NTML Relay in Hot Potato
+   - Sau khi đánh lừa Victim sử dụng proxy của mình làm Server cập nhật Windows thì việc của Attacker chỉ cần ngồi chờ một người dùng nào đó thực hiện việc xác thực NTLM trên hệ thống Attacker để tiến hành NTML Relay.
+   - NTML Relay có nhiều biến thể khác nhau, một phiên bản cũ hơn là SMB -> SMB NTML Relay. Attacker sẽ lừa người dùng xác thực NTML vào SMB service của mình và sử dụng chính token có được để xác thực ngược lại máy của người dùng (cũng qua giao thức SMB). Thế nhưng, bản vá của Windows đã cấm việc sử dụng xác thực NTML cũng một giao thức với cũng một thử thách đang được tạo ra (vì chẳng có ai đã có quyền truy cập SMB lại đi đòi xác thực NTML để một lần nữa truy cập SMB cả) => SMB -> SMB NTML Relay không còn dùng được. Dù thế nào đi nữa, hầu hết các cuộc tấn công Relaying vẫn thường theo dạng MITM như hình sau:
+     ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/be9453af-2204-49df-88ac-007ced8e1195)
+   - Bất chấp việc không thể dùng SMB -> SMB NTML Relay, Attacker lại một lần nữa sáng tạo hơn bằng cách sử dùng HTTP -> SMB Relay. Mọi xác thực NTML để có thể tải xuống file cập nhật Windows của Victim sẽ là dạng HTTP và Attacker sẽ sử dụng nó để xác thực SMB services (hoặc bất kì một dịch vụ nào khác cần NTML xác thực). Tuỳ vào người dùng nào đã xác thực HTTP NTLM thì Attacker sẽ nhận được quyền tương ứng, nếu đó là Windows Update service thì câu lệnh sẽ được chạy quyền "NT AUTHORITY SYSTEM"
