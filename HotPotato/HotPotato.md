@@ -17,12 +17,11 @@ Tổng quan, Hot Potato được chia làm 3 phần chính, tất cả đều c�
      - Nếu không có, Windows thực hiện DNS lookup để tìm.
      - Nếu không thể tìm thấy, Windows sẽ thực hiện NBNS lookup. Giao thức NBNS sẽ hỏi tất cả các host có trong mạng nội bộ bằng cách truyền Broadcast "Who knows the IP address for host XXX?". Bất kể một host nào trong mạng đều có thể tự do trả lời gói tin này.
 
-     1.2. Usage in Hot Potato:
+   1.2. Usage in Hot Potato:
 
    - Lợi dụng điểm yếu của NBNS khi tất cả các host đều có thể trả lời gói tin broadcast hỏi địa chỉ, Attacker có thể đánh lừa hệ thống của Victim rằng Attacker chính là nơi mà Victim đang tìm.
      ![Alt text](images/NBNSspoofing.png)
-
--
+   - 
 
 2. Fake WPAD Proxy Server: Attacker triển khai file cấu hình WAPD độc hại để buộc Victim phải thực hiện xác thực NTLM.
 3. HTTP -> SMB NTLM Relay: Attacker sử dụng WPAD NTML token để truy cập SMB và tạo ra tiển trình có đặc quyền.
