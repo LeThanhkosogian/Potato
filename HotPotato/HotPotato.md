@@ -1,5 +1,5 @@
-# Hot Potato
-## Hot Potato là potato đầu tiên và được đặt tên bởi người phát hiện ra nó Stephen Breen [@breenmachine].(https://twitter.com/breenmachine). Lỗ hổng này có ảnh hưởng đến Windows 7, 8, 10 và Windows Server 2008 và Server 2012.
+# Hot Potato🔥
+## Hot Potato là potato đầu tiên và được đặt tên bởi người phát hiện ra nó Stephen Breen [@breenmachine](https://twitter.com/breenmachine). Lỗ hổng này có ảnh hưởng đến Windows 7, 8, 10 và Windows Server 2008 và Server 2012.
 ## Luồng hoạt động của Hot Potato
 ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/82014ed2-b92c-42fd-b087-91f8c1778a85)
 ### Tổng quan, Hot Potato được chia làm 3 phần chính, tất cả đều có thể sử dụng dòng lệnh để cấu hình. Hơn thế, mỗi phần đều là các kĩ thuât đã được biết đến và được sử dụng trong khoảng thời gian dài, thậm chí cho đến hiện tại (2024).
