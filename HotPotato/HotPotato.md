@@ -57,9 +57,9 @@ Tổng quan, Hot Potato được chia làm 3 phần chính, tất cả đều c�
          - AUTHENTICATE: thông điệp xác thực từ Client
       - Cụ thể hơn:
       ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/680f19e4-d5cd-453f-9ca6-0fd6cee57999)
-      -> Client gửi bản text chứa Username đến Server
-      -> Server gửi cho Client 1 "Đề": 16 byte random number 
-      -> Client dùng Pwd/NTLMHashedPwd mã hoá "Đề" rồi gửi Server
-      -> Server lại gửi "Đề thi", "Lời giải" của Client và Username đến DC
-      -> DC tìm Username trong DC rồi dùng Pwd/NTLMHashedPwd để "Giải đề"
-      -> Nếu "Lời giải" của DC và Client trùng nhau -> OK
+         - Client gửi bản text chứa Username đến Server
+         - Server gửi cho Client 1 "Đề": 16 byte random number
+         - Client dùng Pwd/NTLMHashedPwd mã hoá "Đề" rồi gửi Server
+         - Server lại gửi "Đề thi", "Lời giải" của Client và Username đến DC
+         - DC tìm Username trong DC rồi dùng Pwd/NTLMHashedPwd để "Giải đề"
+         - Nếu "Lời giải" của DC và Client trùng nhau -> OK
