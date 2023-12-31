@@ -18,7 +18,7 @@ Tổng quan, Hot Potato được chia làm 3 phần chính, tất cả đều c�
      - Nếu không có, Windows thực hiện DNS lookup để tìm.
      - Nếu không thể tìm thấy, Windows sẽ thực hiện NBNS lookup. Giao thức NBNS sẽ hỏi tất cả các host có trong mạng nội bộ bằng cách truyền Broadcast "Who knows the IP address for host XXX?". Bất kể một host nào trong mạng đều có thể tự do trả lời gói tin này.
 
-   1.2. Usage in Hot Potato:
+   1.2. NBNS in Hot Potato:
 
    - Lợi dụng điểm yếu của NBNS khi tất cả các host đều có thể trả lời gói tin broadcast hỏi địa chỉ, Attacker có thể đánh lừa hệ thống của Victim rằng Attacker chính là nơi mà Victim đang tìm.
    ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/bbca36e6-3457-4570-8c6c-3d7b89340252)
@@ -29,4 +29,16 @@ Tổng quan, Hot Potato được chia làm 3 phần chính, tất cả đều c�
       - Thế nhưng sẽ thế nào nếu lỡ trong mạng nội bộ đã có sẵn bản ghi DNS mà Victim đang muốn tìm ? Attacker có thể sử dụng kĩ thuật gây cạn kiệt các UDP port, khiến cho mọi DNS lookups đều thất bại => Buộc Victim phải dùng NBNS.
 
 2. Fake WPAD Proxy Server: Attacker triển khai file cấu hình WAPD độc hại để buộc Victim phải thực hiện xác thực NTLM.
-3. HTTP -> SMB NTLM Relay: Attacker sử dụng WPAD NTML token để truy cập SMB và tạo ra tiển trình có đặc quyền.
+
+   2.1. WPAD (Web Proxy Auto Discovey)
+
+   - Là giao thức tự động phát hiện máy chủ proxy cho các yêu cầu HTTP. Được sử dụng bởi các trình duyệt web và các ứng dụng khác để xác định máy chủ proxy mà chúng cần sử dụng để truy cập các trang web và tài nguyên web.
+   - WAPD hoạt động bằng cách sử dụng một tệp văn bản có tên là "WPAD.dat". Tệp này được lưu trữ trên máy chủ proxy hoặc trên một máy chủ khác trong mạng. Tệp này chứa thông tin về máy chủ proxy, chẳng hạn như địa chỉ IP, cổng và tên miền.
+   - Khi một ứng dụng cần truy cập một trang web, nó sẽ gửi một yêu cầu đến máy chủ proxy. Yêu cầu này sẽ bao gồm địa chỉ IP của trang web mà ứng dụng đang cố gắng truy cập. Máy chủ proxy sẽ trả lời yêu cầu bằng cách gửi tệp WPAD.dat. Ứng dụng sẽ sử dụng thông tin trong tệp này để cấu hình chính nó để sử dụng máy chủ proxy.
+  
+   2.2. WPAD in Hot Potato
+
+   - Là giao thức tạo ra với mục đích tốt, tăng tính tiện lợi cho người dùng nhưng có thể bị Attacker lạm dụng. Cụ thể, sau khi đẫ NBNS Spoofing thành công, Victim đã ngỡ Attacker là WPAD-"người em luôn tìm kiếm", Attacker sẽ cấu hình một tệp WPAD.dat độc hại để chỉ định cho Victim rằng máy chủ proxy của Attacker là máy chủ cập nhật Windows. Khi một người dùng cập nhật Windows, máy họ sẽ được cấu hình để sử dụng proxy của Attacker.
+     ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/4190058a-652c-4cf9-b4fb-9fc1fdb29e86)
+
+4. HTTP -> SMB NTLM Relay: Attacker sử dụng WPAD NTML token để truy cập SMB và tạo ra tiển trình có đặc quyền.
