@@ -40,5 +40,5 @@ Tổng quan, Hot Potato được chia làm 3 phần chính, tất cả đều c�
 
    - Là giao thức tạo ra với mục đích tốt, tăng tính tiện lợi cho người dùng nhưng có thể bị Attacker lạm dụng. Cụ thể, sau khi đẫ NBNS Spoofing thành công, Victim đã ngỡ Attacker là WPAD-"người em luôn tìm kiếm", Attacker sẽ cấu hình một tệp WPAD.dat độc hại để chỉ định cho Victim rằng máy chủ proxy của Attacker là máy chủ cập nhật Windows. Khi một người dùng cập nhật Windows, máy họ sẽ được cấu hình để sử dụng proxy của Attacker.
      ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/4190058a-652c-4cf9-b4fb-9fc1fdb29e86)
-
-4. HTTP -> SMB NTLM Relay: Attacker sử dụng WPAD NTML token để truy cập SMB và tạo ra tiển trình có đặc quyền.
+   - Khi người dùng thường tải xuống bản cập nhật, họ sẽ được yêu cầu xác thực NTML với máy chủ proxy. Attacker sẽ sử dụng kĩ thuật NTML relay để tận dụng token xác thực này.
+3. HTTP -> SMB NTLM Relay: Attacker sử dụng WPAD NTML token để truy cập SMB và tạo ra tiển trình có đặc quyền.
