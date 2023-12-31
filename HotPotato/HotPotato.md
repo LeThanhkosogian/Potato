@@ -44,29 +44,29 @@
    - Khi người dùng thường tải xuống bản cập nhật, họ sẽ được yêu cầu xác thực NTML với máy chủ proxy. Attacker sẽ sử dụng kĩ thuật NTML relay để tận dụng token xác thực này.
      
 ## 3. HTTP -> SMB NTLM Relay: Attacker sử dụng WPAD NTML token để truy cập SMB và tạo ra tiển trình có đặc quyền.
-
 ### 3.1. NTLM (Windows New Technology LAN Manager)
    **Overview:**
-      ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/99b72562-f65f-4201-a131-fe7a096af13e)
       - Là giao thức xác thực dạng Challenge/Response (Thử thách / Phản hồi)
       - SSO (Single Sign-On): đăng nhập 1 lần
       - Là giao thức khá lỗi thời (bị Kerberos thay thế), nhưng vẫn được sử dụng đến nay (2024) vì tương thích với hệ thống cũ
+      ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/99b72562-f65f-4201-a131-fe7a096af13e)
+      
    **Works:**
+   
       - Hoạt động theo cơ chế Three-way Handshake
-      ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/d105fcae-6e40-4c5a-90f5-b06e8ca40a91)
          - NEGOTIATE: thông điệp yêu cầu Trao đổi từ Client
          - CHALLENGE: thông điệp Thử thách từ Server
          - AUTHENTICATE: thông điệp xác thực từ Client
+         ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/d105fcae-6e40-4c5a-90f5-b06e8ca40a91)
       - Cụ thể hơn:
-      ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/680f19e4-d5cd-453f-9ca6-0fd6cee57999)
          - Client gửi bản text chứa Username đến Server
          - Server gửi cho Client 1 "Đề": 16 byte random number
          - Client dùng Pwd/NTLMHashedPwd mã hoá "Đề" rồi gửi Server
          - Server lại gửi "Đề thi", "Lời giải" của Client và Username đến DC
          - DC tìm Username trong DC rồi dùng Pwd/NTLMHashedPwd để "Giải đề"
          - Nếu "Lời giải" của DC và Client trùng nhau -> OK
-   
-
+         ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/680f19e4-d5cd-453f-9ca6-0fd6cee57999)
+         
 #### 3.2. NTML Relay in Hot Potato
    - Sau khi đánh lừa Victim sử dụng proxy của mình làm Server cập nhật Windows thì việc của Attacker chỉ cần ngồi chờ một người dùng nào đó thực hiện việc xác thực NTLM trên hệ thống Attacker để tiến hành NTML Relay.
    - NTML Relay có nhiều biến thể khác nhau, một phiên bản cũ hơn là SMB -> SMB NTML Relay. Attacker sẽ lừa người dùng xác thực NTML vào SMB service của mình và sử dụng chính token có được để xác thực ngược lại máy của người dùng (cũng qua giao thức SMB). Thế nhưng, bản vá của Windows đã cấm việc sử dụng xác thực NTML cũng một giao thức với cũng một thử thách đang được tạo ra (vì chẳng có ai đã có quyền truy cập SMB lại đi đòi xác thực NTML để một lần nữa truy cập SMB cả) => SMB -> SMB NTML Relay không còn dùng được. Dù thế nào đi nữa, hầu hết các cuộc tấn công Relaying vẫn thường theo dạng MITM như hình sau:
