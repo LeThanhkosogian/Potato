@@ -52,7 +52,6 @@
       ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/99b72562-f65f-4201-a131-fe7a096af13e)
       
    **Works:**
-   
       - Hoạt động theo cơ chế Three-way Handshake
          - NEGOTIATE: thông điệp yêu cầu Trao đổi từ Client
          - CHALLENGE: thông điệp Thử thách từ Server
