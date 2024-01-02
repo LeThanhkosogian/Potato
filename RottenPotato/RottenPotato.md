@@ -6,16 +6,16 @@
 ## Các bước được mô tả như sau:
 1. Điều hướng RPC để yêu cầu xác thực với proxy:
 - Sử dụng lệnh gọi API CoGetInstanceFromIStorage.
-- Chỉ định địa chỉ IP và cổng của proxy trong lệnh gọi này.
+- Chỉ định địa chỉ IP và cổng của proxy trong lệnh gọi này (127.0.0.1:6666).
 2. RPC gửi gói NTLM Negotiate đến proxy.
 3. Proxy chuyển tiếp gói NTLM Negotiate đến RPC ở cổng 135:
 - Sử dụng gói này làm mẫu.
-- Đồng thời, gọi AcceptSecurityContext để bắt buộc xác thực cục bộ.
-- Lưu ý: Gói này được sửa đổi để bắt buộc xác thực cục bộ.
+- Đồng thời, gọi AcceptSecurityContext để bắt buộc xác thực local.
+- Lưu ý: Gói này được sửa đổi để bắt buộc xác thực local.
 4. & 5. RPC 135 và AcceptSecurityContext phản hồi với gói NTLM Challenge:
-- Nội dung của cả hai gói được trộn lẫn để khớp với một cuộc đàm phán cục bộ.
-- Gói tin hỗn hợp được chuyển tiếp đến RPC (bước 6).
-6. Proxy chuyển tiếp gói NTLM Challenge đã trộn lẫn đến RPC.
+- Nội dung của cả hai gói được mix để khớp với local negotiation.
+- Gói tin được chuyển tiếp đến RPC (bước 6).
+6. Proxy chuyển tiếp gói NTLM Challenge đã mix đến RPC.
 7. RPC phản hồi với gói NTLM Auth:
 - Gói này được gửi đến AcceptSecurityContext (bước 8).
 8. Gói NTLM Auth được gửi đến AcceptSecurityContext.
