@@ -3,7 +3,7 @@
 ## Luồng hoạt động của Hot Potato
 ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/82014ed2-b92c-42fd-b087-91f8c1778a85)
 ### Tổng quan, Hot Potato được chia làm 3 phần chính, tất cả đều có thể sử dụng dòng lệnh để cấu hình. Hơn thế, mỗi phần đều là các kĩ thuât đã được biết đến và được sử dụng trong khoảng thời gian dài, thậm chí cho đến hiện tại (2024).
-## 1. Local NBNS Spoofer: Attacker mạo danh tên phân giải từ địa chỉ IP để khiến cho Victim tải file cấu hình WPAD độc hại.
+## Phần 1. Local NBNS Spoofer: Attacker mạo danh tên phân giải từ địa chỉ IP để khiến cho Victim tải file cấu hình WPAD độc hại.
 ### 1.1. NBNS (WINS) (port 137) (NetBIOS Name Service)
    - NBNS là giao thức quảng bá (broadcast) hoạt động trên nền UPD phục vụ viện phân giải tên, thường được sử dụng trong môi trường Windows.
    - Khi thực hiện một DNS lookup:
@@ -17,7 +17,7 @@
       - Trong thực tế, Attacker có thể biết trước được tên host mà Victim muốn tìm kiếm. Attacker có thể làm giả response (gửi lại cho Victim) và cho dù có TXID (Transaction ID) để xác minh nhưng đó chỉ là số hexa 16 bit (và vì là giao thức UDP nên việc trao đổi sẽ rất nhanh), Attacker lại một lần nữa có thể dùng kĩ thuật Flood để thử nhiều nhất là 2^16=65536 khả năng để đánh lừa Victim.
         ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/8edc2292-ed4a-4c5f-9b6b-f227490c9f0e)
       - Thế nhưng sẽ thế nào nếu lỡ trong mạng nội bộ đã có sẵn bản ghi DNS mà Victim đang muốn tìm ? Attacker có thể sử dụng kĩ thuật gây cạn kiệt các UDP port, khiến cho mọi DNS lookups đều thất bại => Buộc Victim phải dùng NBNS.
-## 2. Fake WPAD Proxy Server: Attacker triển khai file cấu hình WPAD độc hại để buộc Victim phải thực hiện xác thực NTLM.
+## Phần 2. Fake WPAD Proxy Server: Attacker triển khai file cấu hình WPAD độc hại để buộc Victim phải thực hiện xác thực NTLM.
 ### 2.1. WPAD (Web Proxy Auto Discovey)
    - Là giao thức tự động phát hiện máy chủ proxy cho các yêu cầu HTTP. Được sử dụng bởi các trình duyệt web và các ứng dụng khác để xác định máy chủ proxy mà chúng cần sử dụng để truy cập các trang web và tài nguyên web.
    - WPAD hoạt động bằng cách sử dụng một tệp văn bản có tên là "WPAD.dat". Tệp này được lưu trữ trên máy chủ proxy hoặc trên một máy chủ khác trong mạng. Tệp này chứa thông tin về máy chủ proxy, chẳng hạn như địa chỉ IP, cổng và tên miền.
@@ -26,7 +26,7 @@
    - Là giao thức tạo ra với mục đích tốt, tăng tính tiện lợi cho người dùng nhưng có thể bị Attacker lạm dụng. Cụ thể, sau khi đẫ NBNS Spoofing thành công, Victim đã ngỡ Attacker là WPAD-"người em luôn tìm kiếm", Attacker sẽ cấu hình một tệp WPAD.dat độc hại để chỉ định cho Victim rằng máy chủ proxy của Attacker là máy chủ cập nhật Windows. Khi một người dùng cập nhật Windows, máy họ sẽ được cấu hình để sử dụng proxy của Attacker.
      ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/4190058a-652c-4cf9-b4fb-9fc1fdb29e86)
    - Khi người dùng thường tải xuống bản cập nhật, họ sẽ được yêu cầu xác thực NTML với máy chủ proxy. Attacker sẽ sử dụng kĩ thuật NTML relay để tận dụng token xác thực này.
-## 3. HTTP -> SMB NTLM Relay: Attacker sử dụng WPAD NTML token để truy cập SMB và tạo ra tiển trình có đặc quyền.
+## Phần 3. HTTP -> SMB NTLM Relay: Attacker sử dụng WPAD NTML token để truy cập SMB và tạo ra tiển trình có đặc quyền.
 ### 3.1. NTLM (Windows New Technology LAN Manager)
    - Là giao thức xác thực dạng Challenge/Response (Thử thách / Phản hồi)
    - SSO (Single Sign-On): đăng nhập 1 lần
