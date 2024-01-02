@@ -53,7 +53,7 @@
    - NTML Relay có nhiều biến thể khác nhau, một phiên bản cũ hơn là SMB -> SMB NTML Relay. Attacker sẽ lừa người dùng xác thực NTML vào SMB service của mình và sử dụng chính token có được để xác thực ngược lại máy của người dùng (cũng qua giao thức SMB). Thế nhưng, bản vá của Windows đã cấm việc sử dụng xác thực NTML cũng một giao thức với cũng một thử thách đang được tạo ra (vì chẳng có ai đã có quyền truy cập SMB lại đi đòi xác thực NTML để một lần nữa truy cập SMB cả) => SMB -> SMB NTML Relay không còn dùng được. Dù thế nào đi nữa, hầu hết các cuộc tấn công Relaying vẫn thường theo dạng MITM như hình sau:
      ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/be9453af-2204-49df-88ac-007ced8e1195)
    - Bất chấp việc không thể dùng SMB -> SMB NTML Relay, Attacker lại một lần nữa sáng tạo hơn bằng cách sử dùng HTTP -> SMB Relay. Mọi xác thực NTML để có thể tải xuống file cập nhật Windows của Victim sẽ là dạng HTTP và Attacker sẽ sử dụng nó để xác thực SMB services (hoặc bất kì một dịch vụ nào khác cần NTML xác thực). Tuỳ vào người dùng nào đã xác thực HTTP NTLM thì Attacker sẽ nhận được quyền tương ứng, nếu đó là Windows Update service thì câu lệnh sẽ được chạy quyền "NT AUTHORITY SYSTEM".
-
+   - Khi sử dụng để leo quyền trong Windows, NTML Relay sẽ trực tiếp trỏ về 127.0.0.1 để thực hiện leo quyền.
 ## Is Patched?
    - Microsoft đã phát hành bản vá MS16-075 không cho phép xác thực NTLM cũng giao thức bằng một Challenge đã có sẵn (tức là SMB -> SMB NTLM Relay từ một host trở lại chính nó như đã đề cập bên trên).
    - MS16-077 WPAD Name Resolution sẽ không sử dụng NetBIOS (CVE-2016-3213) và không được phép gửi thông tin xác thực khi yêu cầu tệp PAC (CVE-2016-3236) => WPAD MITM đã được vá.
