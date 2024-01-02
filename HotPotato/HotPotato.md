@@ -11,7 +11,7 @@
      - Nếu không có, Windows thực hiện DNS lookup để tìm.
      - Nếu không thể tìm thấy, Windows sẽ thực hiện NBNS lookup. Giao thức NBNS sẽ hỏi tất cả các host có trong mạng nội bộ bằng cách truyền Broadcast "Who knows the IP address for host XXX?". Bất kể một host nào trong mạng đều có thể tự do trả lời gói tin này.
 ### 1.2. NBNS in Hot Potato:
-   || |![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/766b29d7-9466-4c78-8f4a-d9ffeb634c01)| ||
+   ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/766b29d7-9466-4c78-8f4a-d9ffeb634c01):center
    - Lợi dụng điểm yếu của NBNS khi tất cả các host đều có thể trả lời gói tin broadcast hỏi địa chỉ, Attacker có thể đánh lừa hệ thống của Victim rằng Attacker chính là nơi mà Victim đang tìm.
    ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/bbca36e6-3457-4570-8c6c-3d7b89340252)
    - Attacker nghe lén mọi lưu lượng mạng và phản hồi tất cả các truy vấn NBNS trong mạng nội bộ, cố gắng giả mạo mọi hosts, trả lời các requests bằng địa chỉ IP của Attacker. Thế nhưng, thực tế thì Attacker không thể có quyền nghe lén tất cả lưu lượng mạng (điều này đòi hỏi phải có Local administrator). Vậy làm thế nào để Attacker có thể thực hiện NBNS spoofing?
