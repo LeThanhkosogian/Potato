@@ -48,7 +48,7 @@
       - Nếu "Lời giải" của DC và Client trùng nhau -> OK
          ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/680f19e4-d5cd-453f-9ca6-0fd6cee57999)
 #### 3.2. NTML Relay in Hot Potato
-   ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/6de2fdb6-39a9-40ec-93b7-91b6faa16302)
+   ``![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/6de2fdb6-39a9-40ec-93b7-91b6faa16302)
    - Sau khi đánh lừa Victim sử dụng proxy của mình làm Server cập nhật Windows thì việc của Attacker chỉ cần ngồi chờ một người dùng nào đó thực hiện việc xác thực NTLM trên hệ thống Attacker để tiến hành NTML Relay.
    - NTML Relay có nhiều biến thể khác nhau, một phiên bản cũ hơn là SMB -> SMB NTML Relay. Attacker sẽ lừa người dùng xác thực NTML vào SMB service của mình và sử dụng chính token có được để xác thực ngược lại máy của người dùng (cũng qua giao thức SMB). Thế nhưng, bản vá của Windows đã cấm việc sử dụng xác thực NTML cũng một giao thức với cũng một thử thách đang được tạo ra (vì chẳng có ai đã có quyền truy cập SMB lại đi đòi xác thực NTML để một lần nữa truy cập SMB cả) => SMB -> SMB NTML Relay không còn dùng được. Dù thế nào đi nữa, hầu hết các cuộc tấn công Relaying vẫn thường theo dạng MITM như hình sau:
      ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/be9453af-2204-49df-88ac-007ced8e1195)
