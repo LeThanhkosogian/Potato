@@ -29,9 +29,34 @@
 
 ## Phần 1. Trick "NT AUTHORITY\SYSTEM" into authenticating NTLM
 Lợi dụng việc RPC chạy dưới quyền "NT AUTHORITY/SYSTEM" sẽ cố xác thực local proxy (TCP endpoint) của Attacker qua lệnh gọi API "CoGetInstanceFromIStorage".
-### 1.1. 
-### 1.2.
-
+### 1.1. RPC (Remote Procedure Call)
+- Là giao thức mạng, mô hình Client-Server, thực hiện giao tiếp giữa các tiến trình.
+- Hiểu đơn giản là phương pháp gọi hàm (dịch vụ) từ một máy tính ở xa để lấy về kết quả.
+- Ngoài ra còn có gRPC, giúp thực hiện giao tiếp giữa các máy.
+- Mô hình hoạt động của RPC:
+  
+![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/b85e48c3-b73e-441d-9958-5ecdf16e7158)
+### 1.2. COM (Component Object Mode) và CoGetInstanceFromIStorage API
+- COM là một mô hình đối tượng được phát triển bởi Microsoft, cung cấp interfaces và API để các thành phần COM tương tác với nhau.
+- "CoGetInstanceFromIStorage" được sử dụng để tạo một đối tượng COM từ một đối tượng IStorage đã tồn tại.
+- Ngoài ra còn có DCOM (Distribute COM).
+### 1.3. RPC & COM in Rotten Potato
+- Bắt đầu, Attacker sẽ lạm dụng "CoGetInstanceFromIStorage" API gọi đến COM, quá trình được mô tả trong đoạn code mẫu sau:
+![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/041bb2a1-3ce6-48f2-9881-15bcb47df599)
+  - Khởi tạo Method BootstrapComMarshal(), kiểu trả về **void**, độ truy cập **public**, thuộc về Class **static**
+  - Trong phương thức:
+    - Tạo đối tượng IStorage **stg** để lưu trữ dữ liệu liên quan đến COM bằng cách gọi hàm **ComUtils.CreateStorage()**
+    - Tạo Guid (Global ID) **clsid** đại diện cho một máy chủ COM đã biết trên local, cụ thể là BITSv1
+    - Tạo đối tượng TestClass (Là một lớp custom của Attacker) **c**, truyền **stg** và tạo một chuỗi chứa địa chỉ IP:port (127.0.0.1:6666)
+    - Chuẩn bị mảng MULTI_QI để yêu cầu interfaces IUnknownPtr
+    - Gọi hàm CoGetInstanceFromIStorage() để khởi tạo đối tượng COM, truyền các đối số sau
+      - null: Không có tệp lưu trữ cụ thể
+      - ref clsid: Tham chiếu đến Guid của máy chủ COM
+      - null: Không có thuộc tính tùy chỉnh
+      - CLSCTX.CLSCTX_LOCAL_SERVER: Chỉ định tìm máy chủ COM trên hệ thống cục bộ
+      - c: Đối tượng TestClass đã tạo
+      - 1: Số lượng interfaces được yêu cầu
+      - qis: Mảng MULTI_QI chứa thông tin về các interfaces được yêu cầu
 ## Phần 2. Man-in-the-middle (MITM)
 RPC công 135 bị lạm dụng để làm mẫu, giúp Attacker trả lời tất cả các request First RPC (bên phải) thực hiện. 
 ### 2.1.
@@ -44,4 +69,5 @@ Gọi API "AcceptSecurityContext" để mạo danh "NT AUTHORITY/SYSTEM". Việc
 
 ## Is Patched?
 ## References
-
+- [RPC vs gRPC overview](https://viblo.asia/p/gioi-thieu-ve-rpc-va-grpc-E1XVOxOZ4Mz)
+- [COM overview](https://www.youtube.com/watch?app=desktop&v=7FA3PKyg3Vo&ab_channel=CSEMA)
