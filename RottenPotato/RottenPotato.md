@@ -28,7 +28,7 @@
 ### Dù tinh vi hơn Hot Potato, song Rotten Potato vẫn được chia làm 3 phần chính.
 
 ## Phần 1. Trick "NT AUTHORITY\SYSTEM" into authenticating NTLM
-Lợi dụng việc RPC chạy dưới quyền "NT AUTHORITY/SYSTEM" sẽ cố xác thực local proxy (TCP endpoint) của Attacker qua lệnh gọi API "CoGetInstanceFromIStorage".
+**Lợi dụng việc RPC chạy dưới quyền "NT AUTHORITY/SYSTEM" sẽ cố xác thực local proxy (TCP endpoint) của Attacker qua lệnh gọi API "CoGetInstanceFromIStorage".**
 ### 1.1. RPC (Remote Procedure Call)
 - Là giao thức mạng, mô hình Client-Server, thực hiện giao tiếp giữa các tiến trình.
 - Hiểu đơn giản là phương pháp gọi hàm (dịch vụ) từ một máy tính ở xa để lấy về kết quả.
@@ -38,6 +38,7 @@ Lợi dụng việc RPC chạy dưới quyền "NT AUTHORITY/SYSTEM" sẽ cố x
 ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/b85e48c3-b73e-441d-9958-5ecdf16e7158)
 ### 1.2. COM (Component Object Mode) và CoGetInstanceFromIStorage API
 - COM là một mô hình đối tượng được phát triển bởi Microsoft, cung cấp interfaces và API để các thành phần COM tương tác với nhau.
+- COM cho phép liên lạc giữa các thành phần phần mềm của các ngôn ngữ khác nhau.
 - "CoGetInstanceFromIStorage" được sử dụng để tạo một đối tượng COM từ một đối tượng IStorage đã tồn tại.
 - Ngoài ra còn có DCOM (Distribute COM).
 ### 1.3. RPC & COM in Rotten Potato
@@ -53,15 +54,23 @@ Lợi dụng việc RPC chạy dưới quyền "NT AUTHORITY/SYSTEM" sẽ cố x
       - null: Không có tệp lưu trữ cụ thể
       - ref clsid: Tham chiếu đến Guid của máy chủ COM
       - null: Không có thuộc tính tùy chỉnh
-      - CLSCTX.CLSCTX_LOCAL_SERVER: Chỉ định tìm máy chủ COM trên hệ thống cục bộ
+      - CLSCTX.CLSCTX_LOCAL_SERVER: Chỉ định tìm máy chủ COM trên hệ thống local
       - c: Đối tượng TestClass đã tạo
       - 1: Số lượng interfaces được yêu cầu
       - qis: Mảng MULTI_QI chứa thông tin về các interfaces được yêu cầu
 ## Phần 2. Man-in-the-middle (MITM)
-RPC công 135 bị lạm dụng để làm mẫu, giúp Attacker trả lời tất cả các request First RPC (bên phải) thực hiện. 
-### 2.1.
-### 2.2.
-
+**RPC port 135 bị lạm dụng để làm template, giúp Attacker trả lời tất cả các request từ First RPC (bên phải) thực hiện**
+- Đến bước hiện tại, Attacker đã có một COM giao tiếp với local TCP listener của Attacker trên port 6666. Việc cần làm bây giờ là Attacker cần phải giao tiếp với COM (đang chạy dưới quyền NT AUTHORITY/SYSTEM) sao cho đúng để có thể xác thực NTLM.
+- COM sẽ trao đổi bằng giao thức RPC, rất khó để Attacker có thể nắm rõ giao thức RPC theo từng phiên bản Windows. Vì vậy, Attacker sử dụng một kĩ thuật khác để tạo ra câu trả lời chính xác:
+  - Attacker sẽ forward tất cả các gói tin từ COM trên TCP 6666 quay trở lại local Windows RPC port 135
+  - Sử dụng gói tin nhận được từ RPC 135 để làm template (mẫu) để giao tiếp với COM
+- Cụ thể hơn:
+  ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/da7b4f1b-1c94-4866-9427-946edb6305f5)
+  - Packet 7 (127.0.0.1:49247 to 127.0.0.1:6666), COM đang trao đổi với TCP listener 6666 của Attacker
+  - Packet 9 (127.0.0.1:49248 to 127.0.0.1:135), Attacker chuyển tiếp giống như Packet 7 tới RPC TCP 135
+  - Packet 11 (127.0.0.1:135 to 127.0.0.1:49248), Attacker nhận phản hồi từ RPC TCP 135
+  - Packet 13 (127.0.0.1:6666 to 127.0.0.1:49247), Attacker chuyển tiếp phản hồi từ Packet 11 đến COM
+  - Lặp đi lặp lại quá trình này => cho đến khi NTLM diễn ra
 ## Phần 3. Impersonate token
 Gọi API "AcceptSecurityContext" để mạo danh "NT AUTHORITY/SYSTEM". Việc mạo danh (impersonate) chỉ có thể thành công nếu Attacker đang chiếm được TK người dùng có quyền (impersonate security token). Quyền cần thiết này thường thấy ở các TK Service (như Web, Database,...), gần như không có ở TK người dùng thường.
 ### 3.1. 
