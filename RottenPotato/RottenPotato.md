@@ -105,5 +105,6 @@ Gọi API "AcceptSecurityContext" để mạo danh "NT AUTHORITY/SYSTEM". Việc
 
 ## Is Patched?
 ## References
+- [Rotten Potato Binary](https://github.com/breenmachine/RottenPotatoNG)
 - [RPC vs gRPC overview](https://viblo.asia/p/gioi-thieu-ve-rpc-va-grpc-E1XVOxOZ4Mz)
 - [COM overview](https://www.youtube.com/watch?app=desktop&v=7FA3PKyg3Vo&ab_channel=CSEMA)
