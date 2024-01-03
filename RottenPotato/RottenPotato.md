@@ -1,4 +1,4 @@
-# Rotten Potato🐛
+![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/3a24edd0-54e4-40bd-9a36-9207e3e1f3c6)# Rotten Potato🐛
 
 ## Hot Potato sử dụng một số kĩ thuật phức tạp như giả mạo NBNS, WPAD và Windows Update để lừa Windows xác thực với chúng tôi qua HTTP. Tiếp theo, chúng ta sẽ thảo luận về một phương pháp khác để đạt được mục đích tương tự, đó là Rotten Potato do Stephen Breen [@breenmachine](https://twitter.com/breenmachine) công bố.
 
@@ -28,6 +28,7 @@
 ### Dù tinh vi hơn Hot Potato, song Rotten Potato vẫn được chia làm 3 phần chính.
 
 ## Phần 1. Trick "NT AUTHORITY\SYSTEM" into authenticating NTLM
+![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/1de1b5ee-ba71-4ca2-b7a3-bd2d0918f639)
 **Lợi dụng việc RPC chạy dưới quyền "NT AUTHORITY/SYSTEM" sẽ cố xác thực local proxy (TCP endpoint) của Attacker qua lệnh gọi API "CoGetInstanceFromIStorage".**
 ### 1.1. RPC (Remote Procedure Call)
 - Là giao thức mạng, mô hình Client-Server, thực hiện giao tiếp giữa các tiến trình.
@@ -59,6 +60,7 @@
       - 1: Số lượng interfaces được yêu cầu
       - qis: Mảng MULTI_QI chứa thông tin về các interfaces được yêu cầu
 ## Phần 2. Man-in-the-middle (MITM)
+![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/3542fb68-2bd5-436b-ac8d-ce2c1cc2ab2b)
 **RPC port 135 bị lạm dụng để làm template, giúp Attacker trả lời tất cả các request từ First RPC (bên phải) thực hiện**
 ### 2.1. Hunting NTLM
 - Đến bước hiện tại, Attacker đã có một COM giao tiếp với local TCP listener của Attacker trên port 6666. Việc cần làm bây giờ là Attacker cần phải giao tiếp với COM (đang chạy dưới quyền NT AUTHORITY/SYSTEM) sao cho đúng để có thể xác thực NTLM.
@@ -67,17 +69,35 @@
   - Sử dụng gói tin nhận được từ RPC 135 để làm template (mẫu) để giao tiếp với COM
 - Cụ thể hơn:
   ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/da7b4f1b-1c94-4866-9427-946edb6305f5)
-  - _127.0.0.1:49247 => RPC NT AUTHORITY/SYSTEM_
-  - _127.0.0.1:6666 => Listener của Attacker_
-  - _127.0.0.1:135 => Templated RPC_
-  - Packet 7 (127.0.0.1:49247 to 127.0.0.1:6666), COM đang trao đổi với TCP listener 6666 của Attacker
-  - Packet 9 (127.0.0.1:49248 to 127.0.0.1:135), Attacker chuyển tiếp giống như Packet 7 tới RPC TCP 135
-  - Packet 11 (127.0.0.1:135 to 127.0.0.1:49248), Attacker nhận phản hồi từ RPC TCP 135
-  - Packet 13 (127.0.0.1:6666 to 127.0.0.1:49247), Attacker chuyển tiếp phản hồi từ Packet 11 đến COM
+  - Packet 7 (127.0.0.1:49247-COM to 127.0.0.1:6666-Attacker), COM đang trao đổi với TCP listener 6666 của Attacker
+  - Packet 9 (127.0.0.1:49248 to 127.0.0.1:135-TempRPC), Attacker chuyển tiếp giống như Packet 7 tới RPC TCP 135
+  - Packet 11 (127.0.0.1:135-TempRPC to 127.0.0.1:49248), Attacker nhận phản hồi từ RPC TCP 135
+  - Packet 13 (127.0.0.1:6666-Attacker to 127.0.0.1:49247-COM), Attacker chuyển tiếp phản hồi từ Packet 11 đến COM
   - Lặp đi lặp lại quá trình này => cho đến khi NTLM diễn ra
-### 2.2. NTLM Relay
+### 2.2. NTLM Relay at a high level
+**NTLM Relay của Rotten Potato phức tạp hơn nhiều so với Hot Potato**
+- Trước tiên, cần làm rõ quy trình dưới đây:
+![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/f885f989-fb71-4699-85fe-8669df09f03e)
+  - Bên trái, COM sẽ gửi NTLM Negotiate trên TCP 6666. Bên phải, Attacker gọi API Windows "AcquireCredentialsHandle"
+  - Tiếp theo, Attacker gọi "AcceptSecurityContext" và truyền đầu vào là NTLM Type 1 (Negotiate), output sẽ là NTLM Type 2 (Challenge) và gửi lại cho Client yêu cầu xác thực (trong TH này là DCOM)
+  - Khi Client (DCOM) phản hồi bằng NTLM Type 3 (Authenticate), chuyển nó sang lệnh gọi API "AcceptSecurityContext" => Hoàn tất xác thực và nhận được token
+- Sau khi MITM để relay gói tin tại **2.1. Hunting NTML**, sẽ thầy COM bắt đầu xác thực NTLM:
+   ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/f0d3eea0-33d0-4d88-a0db-e0dd8a6e304d)
+ - **NTLM TYPE 1 (NEGOTIATE)**:
+   - Packet 29 (127.0.0.1:49249-COM to 127.0.0.1:6666-Attacker), thông điệp yêu cầu trao đổi từ COM
+   - Packet 31, Attacker relay đến RPC 135
+ - **NTLM TYPE 2 (CHALLENGE)**:
+   - Packet 33 (127.0.0.1:135-TempRPC to 127.0.0.1:6666-49250), RPC 135 sẽ phản hồi bằng gói NTLM Challenge, đây là hình ảnh 2 gói NTLM Type 2, trái là TempRPC->Attacker, phải là Attacker->COM:
+     ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/abdec887-c01a-4a02-8ca5-9156d9ce0bcc)
+   - Thay vì lập tức chuyển tiếp gói này đến COM, Attacker thực hiện 1 số thao tác, thay đổi giá trị phần **"NTLM Server Challenge" và "Reserved"** để đảm bảo lời gọi API "AcceptSecurityContext" sẽ thành công. Nếu không, RPC 135 sẽ được xác thực thay vì Attacker.
+   - Sau khi sửa đổi, chuyển tiếp gói NTLM TYPE 2 (CHALLENGE) đến COM
+- **NTLM TYPE 3 (AUTHENTICATE)**:
+  - COM dưới quyền NT AUTHORITY/SYSTEM sẽ gửi lại NTLM TYPE 3 (AUTHENTICATE) => Dùng nó để thực hiện lệnh gọi cuối đến "AcceptSecurityContext"
+  - Sau đó, gọi “ImpersonateSecurityContext” để nhận Impersonation Token
+
+
 ## Phần 3. Impersonate token
-Gọi API "AcceptSecurityContext" để mạo danh "NT AUTHORITY/SYSTEM". Việc mạo danh (impersonate) chỉ có thể thành công nếu Attacker đang chiếm được TK người dùng có quyền (impersonate security token). Quyền cần thiết này thường thấy ở các TK Service (như Web, Database,...), gần như không có ở TK người dùng thường.
+Gọi API "AcceptSecurityContext" để mạo danh "NT AUTHORITY/SYSTEM". Việc mạo danh (impersonate) chỉ có thể thành công nếu Attacker đang chiếm được TK người dùng có quyền (impersonate security token). Quyền cần thiết này thường thấy ở các TK Service (như Web(IIS), Database(MSSQL),...), gần như không có ở TK người dùng thường.
 ### 3.1. 
 ### 3.2.
 
