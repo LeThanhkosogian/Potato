@@ -60,17 +60,22 @@
       - qis: Mảng MULTI_QI chứa thông tin về các interfaces được yêu cầu
 ## Phần 2. Man-in-the-middle (MITM)
 **RPC port 135 bị lạm dụng để làm template, giúp Attacker trả lời tất cả các request từ First RPC (bên phải) thực hiện**
+### 2.1. Hunting NTLM
 - Đến bước hiện tại, Attacker đã có một COM giao tiếp với local TCP listener của Attacker trên port 6666. Việc cần làm bây giờ là Attacker cần phải giao tiếp với COM (đang chạy dưới quyền NT AUTHORITY/SYSTEM) sao cho đúng để có thể xác thực NTLM.
 - COM sẽ trao đổi bằng giao thức RPC, rất khó để Attacker có thể nắm rõ giao thức RPC theo từng phiên bản Windows. Vì vậy, Attacker sử dụng một kĩ thuật khác để tạo ra câu trả lời chính xác:
   - Attacker sẽ forward tất cả các gói tin từ COM trên TCP 6666 quay trở lại local Windows RPC port 135
   - Sử dụng gói tin nhận được từ RPC 135 để làm template (mẫu) để giao tiếp với COM
 - Cụ thể hơn:
   ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/da7b4f1b-1c94-4866-9427-946edb6305f5)
+  - _127.0.0.1:49247 => RPC NT AUTHORITY/SYSTEM_
+  - _127.0.0.1:6666 => Listener của Attacker_
+  - _127.0.0.1:135 => Templated RPC_
   - Packet 7 (127.0.0.1:49247 to 127.0.0.1:6666), COM đang trao đổi với TCP listener 6666 của Attacker
   - Packet 9 (127.0.0.1:49248 to 127.0.0.1:135), Attacker chuyển tiếp giống như Packet 7 tới RPC TCP 135
   - Packet 11 (127.0.0.1:135 to 127.0.0.1:49248), Attacker nhận phản hồi từ RPC TCP 135
   - Packet 13 (127.0.0.1:6666 to 127.0.0.1:49247), Attacker chuyển tiếp phản hồi từ Packet 11 đến COM
   - Lặp đi lặp lại quá trình này => cho đến khi NTLM diễn ra
+### 2.2. NTLM Relay
 ## Phần 3. Impersonate token
 Gọi API "AcceptSecurityContext" để mạo danh "NT AUTHORITY/SYSTEM". Việc mạo danh (impersonate) chỉ có thể thành công nếu Attacker đang chiếm được TK người dùng có quyền (impersonate security token). Quyền cần thiết này thường thấy ở các TK Service (như Web, Database,...), gần như không có ở TK người dùng thường.
 ### 3.1. 
