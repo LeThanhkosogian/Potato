@@ -104,6 +104,10 @@ Gọi API "AcceptSecurityContext" để mạo danh "NT AUTHORITY/SYSTEM". Việc
 - [MSSQL Demo](https://youtu.be/3CPdKMeB0UY)
 
 ## Is Patched?
+- Đã được sửa lỗi trong các phiên bản >= Windows 10 & Windows Server 2019
+- DCOM không còn giao tiếp được với Local Listener => no MITM
+- Client không còn có thể thực hiện Negotiate Local Authentication
+
 ## References
 - [Rotten Potato Binary](https://github.com/breenmachine/RottenPotatoNG)
 - [RPC vs gRPC overview](https://viblo.asia/p/gioi-thieu-ve-rpc-va-grpc-E1XVOxOZ4Mz)
