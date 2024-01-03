@@ -1,4 +1,4 @@
-![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/3a24edd0-54e4-40bd-9a36-9207e3e1f3c6)# Rotten Potato🐛
+# Rotten Potato🐛
 
 ## Hot Potato sử dụng một số kĩ thuật phức tạp như giả mạo NBNS, WPAD và Windows Update để lừa Windows xác thực với chúng tôi qua HTTP. Tiếp theo, chúng ta sẽ thảo luận về một phương pháp khác để đạt được mục đích tương tự, đó là Rotten Potato do Stephen Breen [@breenmachine](https://twitter.com/breenmachine) công bố.
 
