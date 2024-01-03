@@ -29,6 +29,7 @@
 
 ## Phần 1. Trick "NT AUTHORITY\SYSTEM" into authenticating NTLM
 ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/1de1b5ee-ba71-4ca2-b7a3-bd2d0918f639)
+
 **Lợi dụng việc RPC chạy dưới quyền "NT AUTHORITY/SYSTEM" sẽ cố xác thực local proxy (TCP endpoint) của Attacker qua lệnh gọi API "CoGetInstanceFromIStorage".**
 ### 1.1. RPC (Remote Procedure Call)
 - Là giao thức mạng, mô hình Client-Server, thực hiện giao tiếp giữa các tiến trình.
@@ -61,6 +62,7 @@
       - qis: Mảng MULTI_QI chứa thông tin về các interfaces được yêu cầu
 ## Phần 2. Man-in-the-middle (MITM)
 ![image](https://github.com/LeThanhkosogian/Potato/assets/97555997/3542fb68-2bd5-436b-ac8d-ce2c1cc2ab2b)
+
 **RPC port 135 bị lạm dụng để làm template, giúp Attacker trả lời tất cả các request từ First RPC (bên phải) thực hiện**
 ### 2.1. Hunting NTLM
 - Đến bước hiện tại, Attacker đã có một COM giao tiếp với local TCP listener của Attacker trên port 6666. Việc cần làm bây giờ là Attacker cần phải giao tiếp với COM (đang chạy dưới quyền NT AUTHORITY/SYSTEM) sao cho đúng để có thể xác thực NTLM.
