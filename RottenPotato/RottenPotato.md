@@ -22,13 +22,15 @@
 9. Thực hiện mạo danh (impersonation).
 ### Dù tinh vi hơn Hot Potato, song Rotten Potato vẫn được chia làm 3 phần chính. 
 ## Phần 1. Trick "NT AUTHORITY\SYSTEM" into authenticating NTLM
-Lợi dụng việc RPC chạy dưới quyền 
+Lợi dụng việc RPC chạy dưới quyền "NT AUTHORITY/SYSTEM" sẽ cố xác thực local proxy (TCP endpoint) của Attacker qua lệnh gọi API "CoGetInstanceFromIStorage".
 ### 1.1. 
 ### 1.2. 
 ## Phần 2. Man-in-the-middle (MITM)
+RPC công 135 bị lạm dụng để làm mẫu, giúp Attacker trả lời tất cả các request First RPC (bên phải) thực hiện. 
 ### 2.1.
 ### 2.2.
 ## Phần 3. Impersonate token
+Gọi API "AcceptSecurityContext" để mạo danh "NT AUTHORITY/SYSTEM". Việc mạo danh (impersonate) chỉ có thể thành công nếu Attacker đang chiếm được TK người dùng có quyền (impersonate security token). Quyền cần thiết này thường thấy ở các TK Service (như Web, Database,...), gần như không có ở TK người dùng thường.
 ### 3.1. 
 ### 3.2.
  
