@@ -98,8 +98,10 @@
 
 ## Phần 3. Impersonate token
 Gọi API "AcceptSecurityContext" để mạo danh "NT AUTHORITY/SYSTEM". Việc mạo danh (impersonate) chỉ có thể thành công nếu Attacker đang chiếm được TK người dùng có quyền (impersonate security token). Quyền cần thiết này thường thấy ở các TK Service (như Web(IIS), Database(MSSQL),...), gần như không có ở TK người dùng thường.
-### 3.1. 
-### 3.2.
+- [Social Engineering the Windows Kernel - James Forshaw’s BlackHat](https://www.youtube.com/watch?v=QRpfvmMbDMg&ab_channel=BlackHat)
+- [Rotten Background and Demo](https://www.youtube.com/watch?v=8Wjs__mWOKI&ab_channel=AdrianCrenshaw)
+- [IIS Demo](https://youtu.be/wK0r-TZR7w8)
+- [MSSQL Demo](https://youtu.be/3CPdKMeB0UY)
 
 ## Is Patched?
 ## References
