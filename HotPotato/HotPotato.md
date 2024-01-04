@@ -5,7 +5,7 @@
 ### Tổng quan, Hot Potato được chia làm 3 phần chính, tất cả đều có thể sử dụng dòng lệnh để cấu hình. Hơn thế, mỗi phần đều là các kĩ thuât đã được biết đến và được sử dụng trong khoảng thời gian dài, thậm chí cho đến hiện tại (2024).
 ## Phần 1. Local NBNS Spoofer: Attacker mạo danh tên phân giải từ địa chỉ IP để khiến cho Victim tải file cấu hình WPAD độc hại.
 ### 1.1. NBNS (WINS) (port 137) (NetBIOS Name Service)
-   - NBNS là giao thức quảng bá (broadcast) hoạt động trên nền UPD phục vụ viện phân giải tên, thường được sử dụng trong môi trường Windows.
+   - NBNS là giao thức quảng bá (broadcast) hoạt động trên nền UDP phục vụ viện phân giải tên, thường được sử dụng trong môi trường Windows.
    - Khi thực hiện một DNS lookup:
      - Trước tiên, Windows sẽ kiểm tra file "hosts" trong "C:\Windows\System32\drivers\etc".
      - Nếu không có, Windows thực hiện DNS lookup để tìm.
